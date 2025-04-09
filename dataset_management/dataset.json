@@ -1,0 +1,11 @@
+{
+ "channel_names": {
+   "0": "CT"
+ },
+ "labels": {
+   "background": 0,
+   "PTV_tot": 1
+ },
+ "numTraining": 32,
+ "file_ending": ".png"
+ }
