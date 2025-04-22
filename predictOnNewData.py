@@ -13,6 +13,28 @@ import time
 import warnings
 warnings.filterwarnings('ignore', category=FutureWarning)
 
+def predict_single_volume(model, image_tensor, model_params):
+    """
+    Performs a forward pass on a single image tensor (already preprocessed).
+    Returns the raw output of the model without writing to disk.
+    :param model: the loaded PyTorch model
+    :param image_tensor: a single image tensor of shape (1, C, H, W, D) or (C, H, W, D)
+    :param model_params: dictionary of model parameters (in case normalization is needed)
+    :return: model prediction tensor
+    """
+    from torch import no_grad
+
+    if image_tensor.ndim == 4:
+        image_tensor = image_tensor.unsqueeze(0)  # add batch dimension
+
+    image_tensor = image_tensor.float().cuda()  # send to GPU if needed
+
+    with no_grad():
+        model.eval()
+        output = model(image_tensor)
+
+    return output
+
 def main(model_folder, img_path, path_results, foldNumber, structure=None):
     '''
     This function is used to predict on new data, it uses a model trained on the AUTOMI dataset from a specific fold.
@@ -80,6 +102,8 @@ def predict(model, dataloader, path_results, foldNumber):
 
     print(
         f'New Dataset: \t{100 * (ii + 1) / nbatches:.2f}% complete. {time.time() - st_time:.2f} seconds elapsed.')
+    
+
 
 
 if __name__ == '__main__':
