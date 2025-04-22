@@ -13,7 +13,7 @@ import time
 import warnings
 warnings.filterwarnings('ignore', category=FutureWarning)
 
-def predict_single_volume(model, image_tensor, model_params):
+def predict_single_volume(image_tensor, model_folder, foldNumber):
     """
     Performs a forward pass on a single image tensor (already preprocessed).
     Returns the raw output of the model without writing to disk.
@@ -22,12 +22,16 @@ def predict_single_volume(model, image_tensor, model_params):
     :param model_params: dictionary of model parameters (in case normalization is needed)
     :return: model prediction tensor
     """
-    from torch import no_grad
 
     if image_tensor.ndim == 4:
         image_tensor = image_tensor.unsqueeze(0)  # add batch dimension
 
     image_tensor = image_tensor.float().cuda()  # send to GPU if needed
+
+    # Load model params
+    model_params = load_model_params(model_folder)
+
+    model = loadModel(model_folder, foldNumber, model_params)
 
     with no_grad():
         model.eval()
